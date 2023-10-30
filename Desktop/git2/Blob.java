@@ -11,26 +11,21 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 
-
-public class Blob
-{
+public class Blob {
     private String sha;
 
-    public Blob(String inputFile) throws Exception
-    {
+    public Blob(String inputFile) throws Exception {
         Utils.checkIfObjectsExists();
         String content = Utils.readFile(inputFile);
         sha = Utils.sha1(content);
-        //Check if same file exists
-        if (Files.exists(Paths.get("./objects/" + sha)))
-        {
+        // Check if same file exists
+        if (Files.exists(Paths.get("./objects/" + sha))) {
             return;
         }
-           Utils.writeToFile(content, "./objects/" + sha);
+        Utils.writeToFile(content, "./objects/" + sha);
     }
 
-    public String getSha()
-    {
+    public String getSha() {
         return sha;
     }
 }

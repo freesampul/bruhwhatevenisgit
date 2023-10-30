@@ -20,27 +20,25 @@ public class Commit {
     private String nextSha;
 
     public Commit(String parentCommit, String author, String summary) throws Exception {
+        this.parentCommit = parentCommit;
         this.parentTree = createTree();
         this.summary = summary;
         this.author = author;
-        this.parentCommit = parentCommit;
         clearIndex();
         this.nextSha = "";
         writeOut();
     }
-        // Creates the tree if it doesn't exist
+
+    // Creates the tree if it doesn't exist
     public String createTree() throws Exception {
         Tree t = new Tree();
-        t.addIndex();
-        if(parentCommit != null) {
-             String prevTree = Utils.readFile("./objects/" + parentCommit);
-             String[] prevTreeSplit = prevTree.split("\n");
+        System.out.println("parent: " + parentCommit);
+        t.addIndex(parentCommit);
+        if (!parentCommit.equals("")) {
+            String prevTree = Utils.readFile("./objects/" + parentCommit);
+            String[] prevTreeSplit = prevTree.split("\n");
             prevTree = prevTreeSplit[0];
             t.add("tree : " + prevTree);
-        }
-        if(Utils.getDeleted())
-        {
-            t.add(Utils.getDeletedTreeInfo());
         }
         System.out.println(t.getSha());
         t.writeTree();
@@ -48,7 +46,7 @@ public class Commit {
     }
 
     // Clears the inex
-    private void clearIndex() throws IOException {
+    public static void clearIndex() throws IOException {
         FileWriter fw = new FileWriter(new File("index"));
         fw.write("");
         fw.close();
@@ -190,7 +188,7 @@ public class Commit {
     }
 
     // Gets the tree associated with a hash
-    public static String getTreeFromSha(String sha) throws IOException {
+    public static String getTreeFromShaOfCommit(String sha) throws IOException {
         String prevTree = Utils.readFile("./objects/" + sha);
         String[] prevTreeSplit = prevTree.split("\n");
         prevTree = prevTreeSplit[0];
