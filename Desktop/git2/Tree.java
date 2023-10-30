@@ -163,7 +163,7 @@ public class Tree {
                     String[] checkTreeContentArray2 = checkTreeContentArray[j].split(" : ");
                     if (!checkTreeContentArray2[0].equals("") || !checkTreeContentArray2[1].equals("")) {
                         System.out.println("Adding " + checkTreeContentArray2[0] + " : " + checkTreeContentArray2[1] + " to tree");
-                        treeContent.put(checkTreeContentArray2[0], checkTreeContentArray2[1]);
+                        add(checkTreeContentArray[j]);
                     }
                 }
             }
