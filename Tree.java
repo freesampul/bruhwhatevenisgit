@@ -89,27 +89,28 @@ public class Tree {
         String[] indexContentArray = indexContent.split("\n");
         for (int i = 0; i < indexContentArray.length; i++) {
             System.out.println("currCommit: " + currCommit);
-            if ((indexContentArray[i].contains("*deleted*") || indexContentArray[i].contains("*edited*")) && currCommit.equals("")) {
+            if ((indexContentArray[i].contains("*deleted*") || indexContentArray[i].contains("*edited*"))
+                    && currCommit.equals("")) {
                 throw new Exception("Cannot delete or edit because this is the first commit!");
             }
             if (indexContentArray[i].contains("*deleted*")) {
                 String fileToBeDeleted = indexContentArray[i].substring(10);
                 findDeletedFile(fileToBeDeleted, currCommit);
             } else if (indexContentArray[i].contains("*edited*")) {
-
-            }
-                else if(!indexContentArray[i].contains("*edited*") || !indexContentArray[i].contains("*deleted*")){
-                    System.out.println("Adding " + indexContentArray[i] + " to tree");
-                    if (indexContentArray[i].substring(0, 4).equals("tree")) {
-                        add(indexContentArray[i]);
-                    } else {
-                        String blobSha = indexContentArray[i].substring(indexContentArray[i].indexOf(":") + 2);
-                        String fileName = indexContentArray[i].substring(0, indexContentArray[i].indexOf(":") - 1);
-                        System.out.println("blob : " + blobSha + " : " + fileName);
-                        add("blob : " + blobSha + " : " + fileName);
-                    }
+                String fileToBeDeleted = indexContentArray[i].substring(9);
+                findDeletedFile(fileToBeDeleted, currCommit);
+            } else if (!indexContentArray[i].contains("*edited*") || !indexContentArray[i].contains("*deleted*")) {
+                System.out.println("Adding " + indexContentArray[i] + " to tree");
+                if (indexContentArray[i].substring(0, 4).equals("tree")) {
+                    add(indexContentArray[i]);
+                } else {
+                    String blobSha = indexContentArray[i].substring(indexContentArray[i].indexOf(":") + 2);
+                    String fileName = indexContentArray[i].substring(0, indexContentArray[i].indexOf(":") - 1);
+                    System.out.println("blob : " + blobSha + " : " + fileName);
+                    add("blob : " + blobSha + " : " + fileName);
                 }
             }
+        }
     }
 
     public String getSha() {
@@ -147,10 +148,11 @@ public class Tree {
         return treeContent;
     }
 
-
-    //This method is gonna find the tree containg the file to be delted by getting the currs commit tree, checking if the file is there, and if it isn't it recurses on itself. After its found, it puts in the og trees files into the new
-    public void findDeletedFile (String fileToBeDeleted, String currCommit) throws Exception
-    {
+    // This method is gonna find the tree containg the file to be delted by getting
+    // the currs commit tree, checking if the file is there, and if it isn't it
+    // recurses on itself. After its found, it puts in the og trees files into the
+    // new
+    public void findDeletedFile(String fileToBeDeleted, String currCommit) throws Exception {
         String checkTree = Commit.getTreeFromShaOfCommit(currCommit);
         String checkTreeContent = Utils.readFile("./objects/" + checkTree);
         String[] checkTreeContentArray = checkTreeContent.split("\n");
@@ -158,25 +160,25 @@ public class Tree {
             if (checkTreeContentArray[i].contains(fileToBeDeleted)) {
                 for (int j = 0; j < checkTreeContentArray.length; j++) {
                     if (checkTreeContentArray[j].contains(fileToBeDeleted)) {
-                    continue;
+                        continue;
                     } else {
-                    String[] checkTreeContentArray2 = checkTreeContentArray[j].split(" : ");
-                    if (!checkTreeContentArray2[0].equals("") || !checkTreeContentArray2[1].equals("")) {
-                        System.out.println("Adding " + checkTreeContentArray2[0] + " : " + checkTreeContentArray2[1] + " to tree");
-                        add(checkTreeContentArray[j]);
+                        String[] checkTreeContentArray2 = checkTreeContentArray[j].split(" : ");
+                        if (!checkTreeContentArray2[0].equals("") || !checkTreeContentArray2[1].equals("")) {
+                            System.out.println("Adding " + checkTreeContentArray2[0] + " : " + checkTreeContentArray2[1]
+                                    + " to tree");
+                            add(checkTreeContentArray[j]);
+                        }
                     }
                 }
+                return;
             }
-            return;
+            String currCommitContent = Utils.readFile("./objects/" + currCommit);
+            String[] currCommitContentArray = currCommitContent.split("\n");
+            String prevCommit = currCommitContentArray[1];
+            if (prevCommit.equals("")) {
+                throw new Exception("File not found, there was no instance of the file found through previous commits");
             }
-             String currCommitContent = Utils.readFile("./objects/" + currCommit);
-             String[] currCommitContentArray = currCommitContent.split("\n");
-             String prevCommit = currCommitContentArray[1];
-             if(prevCommit.equals(""))
-             {
-                 throw new Exception("File not found, there was no instance of the file found through previous commits");
-             }
-             findDeletedFile (fileToBeDeleted, prevCommit);
+            findDeletedFile(fileToBeDeleted, prevCommit);
         }
     }
 }
