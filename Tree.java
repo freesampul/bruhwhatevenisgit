@@ -86,6 +86,10 @@ public class Tree {
     public void addIndex(String currCommit) throws Exception {
         // reads content in index file
         String indexContent = Utils.readFile("index");
+        if (indexContent.equals("")) {
+            System.out.println("empty index");
+            return;
+        }
         String[] indexContentArray = indexContent.split("\n");
         for (int i = 0; i < indexContentArray.length; i++) {
             System.out.println("currCommit: " + currCommit);

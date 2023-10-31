@@ -7,7 +7,7 @@ public class main {
 
             // First set of code:
             Index.init();
-            Commit a = new Commit("17a4a020e52f8f9c9e92f426f8d8a19ea1b1b065", "Sam2", "Delete inpit");
+            Commit a = new Commit("a7c7189ad24b64263c569df9c5a6c3b837c6ed63", "Sam2", "testing if i addedd dirs right");
 
         } catch (Exception e) {
             e.printStackTrace();
